@@ -2,6 +2,8 @@
 #define CURVEPLOT_CURVEITEM
 
 #include <QGraphicsItem>
+#include <memory>
+#include "PointItem.hpp"
 
 class CurveItem : public QGraphicsItem
 {
@@ -11,7 +13,11 @@ class CurveItem : public QGraphicsItem
 public:
     CurveItem();
 
-    QPointF start, end;
+    void addToScene(QGraphicsScene *scene);
+    virtual void updateCurve();
+
+    QList<std::shared_ptr<PointItem>> controlPoints;
+    QList<QPointF>                    pathPoints;
 };
 
 #endif

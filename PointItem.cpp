@@ -1,15 +1,15 @@
 #include "PointItem.hpp"
+#include "CurveItem.hpp"
 #include <QApplication>
 #include <QBrush>
-#include <iostream>
 #include <QGraphicsSceneMouseEvent>
 
-PointItem::PointItem(qreal x, qreal y, CurveItem *curve_)
+PointItem::PointItem(QPointF position, CurveItem *curve_)
     : curve(curve_)
 {
     setBrush(QBrush(Qt::yellow));
     setRect(0, 0, 10, 10);
-    setPos(x, y);
+    setPos(position-QPointF(5,5));
     setAcceptHoverEvents(true);
 }
 
@@ -23,18 +23,8 @@ void PointItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
     QApplication::restoreOverrideCursor();
 }
 
-void PointItem::mousePressEvent (QGraphicsSceneMouseEvent* event)
-{
-}
-
 void PointItem::mouseMoveEvent (QGraphicsSceneMouseEvent* event)
 {
-    setPos(event->scenePos().x()-5, event->scenePos().y()-5);
-    curve->end = event->scenePos();
-    curve->update();
-}
-
-void PointItem::mouseReleaseEvent (QGraphicsSceneMouseEvent* event)
-{
-    curve->update();
+    setPos(event->scenePos()-QPointF(5, 5));
+    curve->updateCurve();
 }
