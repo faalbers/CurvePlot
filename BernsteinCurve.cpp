@@ -1,7 +1,7 @@
-#include "ChaikinCurve.hpp"
+#include "BernsteinCurve.hpp"
 #include "Eigen/Dense"
 
-ChaikinCurve::ChaikinCurve()
+BernsteinCurve::BernsteinCurve()
 {
     controlPoints.append(std::make_shared<PointItem>(QPointF(50,500), this));
     controlPoints.append(std::make_shared<PointItem>(QPointF(50,100), this));
@@ -10,15 +10,14 @@ ChaikinCurve::ChaikinCurve()
     updateCurve();
 }
 
-void ChaikinCurve::updateCurve()
+void BernsteinCurve::updateCurve()
 {
     // get control points
-    Eigen::Matrix<double, 4, 3> pointsMatrix;
+    Eigen::Matrix<double, 4, 2> pointsMatrix;
     int row = 0;
     for ( auto &controlPoint : controlPoints ) {
         pointsMatrix(row, 0) = controlPoint->pos().x()+5;
         pointsMatrix(row, 1) = controlPoint->pos().y()+5;
-        pointsMatrix(row, 2) = 1;
         row++;
     }
 
@@ -29,13 +28,13 @@ void ChaikinCurve::updateCurve()
         -3,  3,  0,  0,
          3, -6,  3,  0,
         -1,  3, -3,  1;
-
+    
     // create curve path list
     pathPoints.clear();
+    Eigen::Matrix<double, 1, 4> afine;
     int subCount = 50;
     for ( int sub = 0; sub <= subCount; sub++) {
         double t = (double) sub / 50;
-        Eigen::Matrix<double, 1, 4> afine;
         afine << 1, t, pow(t,2), pow(t,3);
         auto result = afine * curveAlgoMatrix * pointsMatrix;
         pathPoints.append(QPointF(result(0,0),result(0,1)));

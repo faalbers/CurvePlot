@@ -24,7 +24,7 @@
        <widget class="QComboBox" name="curveType">
         <item>
          <property name="text">
-          <string>Chaikin</string>
+          <string>Bernstein</string>
          </property>
         </item>
        </widget>

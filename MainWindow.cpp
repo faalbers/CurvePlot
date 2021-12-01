@@ -1,7 +1,7 @@
 #include "MainWindow.hpp"
 #include "./ui_MainWindow.h"
 #include <QGraphicsView>
-#include "ChaikinCurve.hpp"
+#include "BernsteinCurve.hpp"
 
 MainWindow::MainWindow()
     : ui_(new Ui::MainWindow)
@@ -11,7 +11,7 @@ MainWindow::MainWindow()
     auto gScene = new QGraphicsScene(0, 0, 600, 600);
     gScene->setBackgroundBrush(Qt::gray);
 
-    auto curve = new ChaikinCurve;
+    auto curve = new BernsteinCurve;
     curve->addToScene(gScene);
 
     ui_->curveView->setScene(gScene);
