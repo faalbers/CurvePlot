@@ -21,6 +21,3 @@ add_executable(CurvePlot ${CURVEPLOT_TARGETS})
 #target_link_libraries(CurvePlot PRIVATE Qt6::Widgets NumCpp::NumCpp)
 target_link_libraries(CurvePlot PRIVATE Qt6::Widgets)
 target_include_directories(CurvePlot PRIVATE C:/eigen-3.4.0)
-
-#add_executable(testEigen testEigen.cpp)
-#target_include_directories(testEigen PRIVATE C:/eigen-3.4.0)
