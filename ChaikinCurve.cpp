@@ -3,7 +3,8 @@
 ChaikinCurve::ChaikinCurve()
 {
     controlPoints.append(std::make_shared<PointItem>(QPointF(50,500), this));
-    controlPoints.append(std::make_shared<PointItem>(QPointF(300,100), this));
+    controlPoints.append(std::make_shared<PointItem>(QPointF(50,100), this));
+    controlPoints.append(std::make_shared<PointItem>(QPointF(550,100), this));
     controlPoints.append(std::make_shared<PointItem>(QPointF(550,500), this));
     updateCurve();
 }
