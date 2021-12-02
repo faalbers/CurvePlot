@@ -1,9 +1,11 @@
 #include "MainWindow.hpp"
 #include "./ui_MainWindow.h"
 #include <QGraphicsView>
+
+#include "BezierCurve.hpp"
 #include "Bezier3PAlgoCurve.hpp"
 #include "Bezier4PAlgoCurve.hpp"
-#include "BezierCurve.hpp"
+#include "ChaikinCurve.hpp"
 
 MainWindow::MainWindow()
     : ui_(new Ui::MainWindow)
@@ -20,6 +22,7 @@ MainWindow::MainWindow()
     connect(ui_->pointNum, SIGNAL(valueChanged(int)), this, SLOT(changeCurvePointNum(int)));
 
     changeCurveType(ui_->curveType->currentText());
+
 }
 
 MainWindow::~MainWindow()
@@ -49,6 +52,9 @@ void MainWindow::changeCurveType(const QString &curveType)
     } else if ( curveType == "Bezier" ) {
         ui_->pointNum->setEnabled(true);
         currentCurve_ = new BezierCurve(ui_->pointNum->value());
+    } else if ( curveType == "Chaikin" ) {
+        ui_->pointNum->setEnabled(true);
+        currentCurve_ = new ChaikinCurve(ui_->pointNum->value());
     } else return;
     currentCurve_->addToScene(graphicsScene_);
 }

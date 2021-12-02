@@ -24,17 +24,17 @@
        <widget class="QComboBox" name="curveType">
         <item>
          <property name="text">
+          <string>Bezier</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>Bezier3PAlgo</string>
          </property>
         </item>
         <item>
          <property name="text">
           <string>Bezier4PAlgo</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Bezier</string>
          </property>
         </item>
         <item>
