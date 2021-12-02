@@ -1,9 +1,9 @@
 #include "MainWindow.hpp"
 #include "./ui_MainWindow.h"
 #include <QGraphicsView>
-#include "BernsteinCurve.hpp"
-
-#include <iostream>
+#include "Bezier3PAlgoCurve.hpp"
+#include "Bezier4PAlgoCurve.hpp"
+#include "BezierCurve.hpp"
 
 MainWindow::MainWindow()
     : ui_(new Ui::MainWindow)
@@ -17,12 +17,9 @@ MainWindow::MainWindow()
     ui_->curveView->setScene(graphicsScene_);
 
     connect(ui_->curveType, SIGNAL(currentTextChanged(const QString &)), this, SLOT(changeCurveType(const QString &)));
+    connect(ui_->pointNum, SIGNAL(valueChanged(int)), this, SLOT(changeCurvePointNum(int)));
 
     changeCurveType(ui_->curveType->currentText());
-    //auto curve = new BernsteinCurve;
-    //curve->addToScene(gScene);
-    //curve->removeFromScene(gScene);
-
 }
 
 MainWindow::~MainWindow()
@@ -33,15 +30,32 @@ MainWindow::~MainWindow()
 
 void MainWindow::changeCurveType(const QString &curveType)
 {
+    // remove prior curve if needed
     if ( currentCurve_ != nullptr ) {
         currentCurve_->removeFromScene(graphicsScene_);
         delete currentCurve_;
         currentCurve_ = nullptr;
     }
-    if ( curveType == "Bernstein" ) {
-        currentCurve_ = new BernsteinCurve;
-        ui_->pointNum->setValue(currentCurve_->getPointsNum());
+
+    // add new curve
+    if ( curveType == "Bezier3PAlgo" ) {
         ui_->pointNum->setEnabled(false);
-        currentCurve_->addToScene(graphicsScene_);
+        currentCurve_ = new Bezier3PAlgoCurve;
+        ui_->pointNum->setValue(currentCurve_->getControlPointNum());
+    } else if ( curveType == "Bezier4PAlgo" ) {
+        ui_->pointNum->setEnabled(false);
+        currentCurve_ = new Bezier4PAlgoCurve;
+        ui_->pointNum->setValue(currentCurve_->getControlPointNum());
+    } else if ( curveType == "Bezier" ) {
+        ui_->pointNum->setEnabled(true);
+        currentCurve_ = new BezierCurve(ui_->pointNum->value());
+    } else return;
+    currentCurve_->addToScene(graphicsScene_);
+}
+
+void MainWindow::changeCurvePointNum(int pointNum)
+{
+    if ( ui_->pointNum->isEnabled() ) {
+        changeCurveType(ui_->curveType->currentText());
     }
 }

@@ -1,19 +1,19 @@
-#include "BernsteinCurve.hpp"
+#include "Bezier3PAlgoCurve.hpp"
 #include "Eigen/Dense"
 
-BernsteinCurve::BernsteinCurve()
+Bezier3PAlgoCurve::Bezier3PAlgoCurve()
+    : CurveItem(3)
 {
     controlPoints.append(std::make_shared<PointItem>(QPointF(50,500), this));
-    controlPoints.append(std::make_shared<PointItem>(QPointF(50,100), this));
-    controlPoints.append(std::make_shared<PointItem>(QPointF(550,100), this));
+    controlPoints.append(std::make_shared<PointItem>(QPointF(300,100), this));
     controlPoints.append(std::make_shared<PointItem>(QPointF(550,500), this));
     updateCurve();
 }
 
-void BernsteinCurve::updateCurve()
+void Bezier3PAlgoCurve::updateCurve()
 {
     // get control points
-    Eigen::Matrix<double, 4, 2> pointsMatrix;
+    Eigen::Matrix<double, 3, 2> pointsMatrix;
     int row = 0;
     for ( auto &controlPoint : controlPoints ) {
         pointsMatrix(row, 0) = controlPoint->pos().x()+5;
@@ -22,20 +22,19 @@ void BernsteinCurve::updateCurve()
     }
 
     // make curve algorithm matrix multiplier
-    Eigen::Matrix4d curveAlgoMatrix;
+    Eigen::Matrix3d curveAlgoMatrix;
     curveAlgoMatrix
-    <<   1,  0,  0,  0,
-        -3,  3,  0,  0,
-         3, -6,  3,  0,
-        -1,  3, -3,  1;
+    <<   1,  0,  0,
+        -2,  2,  0,
+         1, -2,  1;
     
     // create curve path list
     pathPoints.clear();
-    Eigen::Matrix<double, 1, 4> afine;
+    Eigen::Matrix<double, 1, 3> afine;
     int subCount = 50;
     for ( int sub = 0; sub <= subCount; sub++) {
         double t = (double) sub / 50;
-        afine << 1, t, pow(t,2), pow(t,3);
+        afine << 1, t, pow(t,2);
         auto result = afine * curveAlgoMatrix * pointsMatrix;
         pathPoints.append(QPointF(result(0,0),result(0,1)));
     }

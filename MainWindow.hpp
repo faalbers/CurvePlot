@@ -18,7 +18,7 @@ public:
 
 public slots:
     void changeCurveType(const QString &curveType);
-
+    void changeCurvePointNum(int pointNum);
 private:
     Ui::MainWindow* ui_;
     QGraphicsScene* graphicsScene_;
