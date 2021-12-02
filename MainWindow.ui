@@ -27,6 +27,11 @@
           <string>Bernstein</string>
          </property>
         </item>
+        <item>
+         <property name="text">
+          <string>Chaikin</string>
+         </property>
+        </item>
        </widget>
       </item>
       <item>

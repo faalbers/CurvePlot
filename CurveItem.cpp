@@ -12,6 +12,17 @@ void CurveItem::addToScene(QGraphicsScene *scene)
     for ( auto &controlPoint : controlPoints ) scene->addItem(controlPoint.get());
 }
 
+void CurveItem::removeFromScene(QGraphicsScene *scene)
+{
+    for ( auto &controlPoint : controlPoints ) scene->removeItem(controlPoint.get());
+    scene->removeItem(this);
+}
+
+int CurveItem::getPointsNum() const
+{
+    return controlPoints.size();
+}
+
 void CurveItem::updateCurve()
 {
     update();

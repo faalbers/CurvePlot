@@ -13,7 +13,9 @@ class CurveItem : public QGraphicsItem
 public:
     CurveItem();
 
-    void addToScene(QGraphicsScene *scene);
+    void  addToScene(QGraphicsScene *scene);
+    void  removeFromScene(QGraphicsScene *scene);
+    int   getPointsNum() const;
     virtual void updateCurve();
 
     QList<std::shared_ptr<PointItem>> controlPoints;

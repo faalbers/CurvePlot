@@ -2,6 +2,7 @@
 #define CURVEPLOT_MAINWINDOW
 
 #include <QMainWindow>
+#include "CurveItem.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -13,9 +14,15 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow();
+    ~MainWindow();
+
+public slots:
+    void changeCurveType(const QString &curveType);
 
 private:
     Ui::MainWindow* ui_;
+    QGraphicsScene* graphicsScene_;
+    CurveItem*      currentCurve_;
 };
 
 #endif
