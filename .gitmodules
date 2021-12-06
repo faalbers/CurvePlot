@@ -1,0 +1,3 @@
+[submodule "extern/ModelHierarchy"]
+	path = extern/ModelHierarchy
+	url = https://github.com/faalbers/ModelHierachy.git
