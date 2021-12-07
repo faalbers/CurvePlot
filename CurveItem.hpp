@@ -13,11 +13,12 @@ class CurveItem : public QGraphicsItem
 public:
     CurveItem(size_t controlPointNum_);
 
-    void  addToScene(QGraphicsScene *scene);
-    void  removeFromScene(QGraphicsScene *scene);
-    void  setControlPointNum(size_t &pointNum);
-    size_t   getControlPointNum() const;
-    virtual void updateCurve();
+    void            addToScene(QGraphicsScene *scene);
+    void            removeFromScene(QGraphicsScene *scene);
+    void            setControlPointNum(size_t &pointNum);
+    size_t          getControlPointNum() const;
+    virtual void    updateControlPoints() = 0;
+    virtual void    updateCurvePath() = 0;
 
     size_t                              controlPointNum;
     QList<std::shared_ptr<PointItem>>   controlPoints;

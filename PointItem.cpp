@@ -26,5 +26,5 @@ void PointItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 void PointItem::mouseMoveEvent (QGraphicsSceneMouseEvent* event)
 {
     setPos(event->scenePos()-QPointF(5, 5));
-    curve->updateCurve();
+    curve->updateCurvePath();
 }

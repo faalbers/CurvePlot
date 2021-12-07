@@ -29,11 +29,6 @@ size_t CurveItem::getControlPointNum() const
     return controlPointNum;
 }
 
-void CurveItem::updateCurve()
-{
-    update();
-}
-
 QRectF CurveItem::boundingRect() const
 {
     return QRectF(-100, -100, 800, 800);

@@ -20,6 +20,11 @@ public:
 public slots:
     void changeCurveType(const QString &curveType);
     void changeCurvePointNum(int pointNum);
+    void changeCurveRecurse(int recurse);
+    void changeCurvePosX(int posX);
+    void changeCurvePosY(int posX);
+    void changeCurveRot(int rot);
+
 private:
     Ui::MainWindow* ui_;
     QGraphicsScene* graphicsScene_;

@@ -10,6 +10,8 @@ public:
     ChaikinCurve(MH::Node *chaikinCurve);
 
     void updateCurve();
+    void updateControlPoints();
+    void updateCurvePath();
 
 private:
     MH::Node    *chaikinCurveNode_;
