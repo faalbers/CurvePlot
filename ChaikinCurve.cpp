@@ -1,43 +1,36 @@
 #include "ChaikinCurve.hpp"
 #include "Eigen/Dense"
 
-ChaikinCurve::ChaikinCurve(int controlPointNum_)
-    : CurveItem(controlPointNum_)
-    , levels_(4)
+ChaikinCurve::ChaikinCurve(MH::Node *chaikinCurveNode)
+    : CurveItem(chaikinCurveNode->getModel()->getCount("cpnum"))
+    , chaikinCurveNode_(chaikinCurveNode)
+    , chaikinCurveModel_(chaikinCurveNode->getModel().get())
 {
-    auto subAngle = M_PI / (controlPointNum-1);
-    for ( int sub = 0; sub < controlPointNum; sub++ ) {
-        auto angle = subAngle * sub;
-        controlPoints.append(std::make_shared<PointItem>(QPointF(300-(cos(angle)*300),450-(sin(angle)*300)), this));
-    }
-
+    auto tcPoints = chaikinCurveModel_->getPointArray("cp");
+    auto transform = chaikinCurveNode_->getTransform();
+    tcPoints *= transform;
+    for ( size_t index = 0; index < tcPoints.rows(); index++ )
+        controlPoints.append(std::make_shared<PointItem>(QPointF(tcPoints(index,0),tcPoints(index,1)), this));
     updateCurve();
 }
 
 void ChaikinCurve::updateCurve()
 {
-    pathPoints.clear();
-    for ( auto &controlPoint : controlPoints )
-        pathPoints.append(QPointF(controlPoint->pos().x()+5, controlPoint->pos().y()+5));
-    for ( int level = 0; level < levels_; level++ ) chaikin_();
-    update();
-}
-
-void ChaikinCurve::chaikin_()
-{
-    if ( pathPoints.size() == 0 ) return;
-    QList<QPointF> newPathPoints;
-    auto lastPathPoint = pathPoints[0];
-    bool firstPoint = true;
-    for ( auto pathPoint : pathPoints ) {
-        if ( firstPoint ) {
-            firstPoint = false;
-            continue;
-        }
-        auto pathVector = pathPoint - lastPathPoint;
-        newPathPoints.append(lastPathPoint + (pathVector * 0.25));
-        newPathPoints.append(lastPathPoint + (pathVector * 0.75));
-        lastPathPoint = pathPoint;
+    auto tcPoints = chaikinCurveModel_->getPointArray("cp");
+    auto transform = chaikinCurveNode_->getTransformInverse();
+    size_t index = 0;
+    for ( auto &controlPoint : controlPoints ) {
+        tcPoints(index,0) = controlPoint->pos().x()+5;
+        tcPoints(index,1) = controlPoint->pos().y()+5;
+        index ++;
     }
-    pathPoints = newPathPoints;
+    tcPoints *= transform;
+
+    chaikinCurveModel_->setPointArray("cp", tcPoints);
+    auto vPoints = chaikinCurveNode_->getTransformedVertices();
+    pathPoints.clear();
+    for ( size_t index = 0; index < vPoints.rows(); index++ )
+        pathPoints.append(QPointF(vPoints(index,0), vPoints(index,1)));
+    
+    update();
 }

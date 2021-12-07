@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "CurveItem.hpp"
+#include "ModelHierarchy.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -23,6 +24,8 @@ private:
     Ui::MainWindow* ui_;
     QGraphicsScene* graphicsScene_;
     CurveItem*      currentCurve_;
+    std::shared_ptr<MH::ModelHierachy> mh_;
+    MH::Node        *chaikinNode_;
 };
 
 #endif

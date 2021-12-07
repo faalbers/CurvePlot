@@ -11,17 +11,17 @@ class CurveItem : public QGraphicsItem
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 public:
-    CurveItem(int controlPointNum_);
+    CurveItem(size_t controlPointNum_);
 
     void  addToScene(QGraphicsScene *scene);
     void  removeFromScene(QGraphicsScene *scene);
-    void  setControlPointNum(int &pointNum);
-    int   getControlPointNum() const;
+    void  setControlPointNum(size_t &pointNum);
+    size_t   getControlPointNum() const;
     virtual void updateCurve();
 
-    int                               controlPointNum;
-    QList<std::shared_ptr<PointItem>> controlPoints;
-    QList<QPointF>                    pathPoints;
+    size_t                              controlPointNum;
+    QList<std::shared_ptr<PointItem>>   controlPoints;
+    QList<QPointF>                      pathPoints;
 };
 
 #endif
