@@ -8,9 +8,9 @@ ChaikinCurve::ChaikinCurve(MH::Node *chaikinCurveNode)
 {
     auto tcPoints = chaikinCurveModel_->getPointArray("cp");
     auto transform = chaikinCurveNode_->getTransform();
-    tcPoints *= transform;
+    tcPoints = transform * tcPoints.matrix();
     for ( size_t index = 0; index < tcPoints.rows(); index++ )
-        controlPoints.append(std::make_shared<PointItem>(QPointF(tcPoints(index,0),tcPoints(index,1)), this));
+        controlPoints.append(std::make_shared<PointItem>(QPointF(tcPoints(0,index),tcPoints(1,index)), this));
     updateCurvePath();
 }
 
@@ -18,10 +18,10 @@ void ChaikinCurve::updateControlPoints()
 {
     auto cPoints = chaikinCurveModel_->getPointArray("cp");
     auto transform = chaikinCurveNode_->getTransform();
-    cPoints *= transform;
+    cPoints = transform * cPoints.matrix();
     size_t index = 0;
     for ( auto &controlPoint : controlPoints ) {
-        controlPoint->setPos(cPoints(index,0)-5,cPoints(index,1)-5);
+        controlPoint->setPos(cPoints(0,index)-5,cPoints(1,index)-5);
         index ++;
     }
     updateCurvePath();
@@ -33,12 +33,12 @@ void ChaikinCurve::updateCurvePath()
     auto cPoints = chaikinCurveModel_->getPointArray("cp");
     size_t index = 0;
     for ( auto &controlPoint : controlPoints ) {
-        cPoints(index,0) = controlPoint->pos().x()+5;
-        cPoints(index,1) = controlPoint->pos().y()+5;
+        cPoints(0,index) = controlPoint->pos().x()+5;
+        cPoints(1,index) = controlPoint->pos().y()+5;
         index ++;
     }
     auto transform = chaikinCurveNode_->getTransformInverse();
-    cPoints *= transform;
+    cPoints = transform * cPoints.matrix();
     chaikinCurveModel_->setPointArray("cp", cPoints);
 
     // get recalculated path vertices and get them transformed
