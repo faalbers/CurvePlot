@@ -45,7 +45,6 @@ void ChaikinCurve::updateCurvePath()
 
     // get recalculated path vertices and get them transformed
     auto vPoints = chaikinCurveNode_->getTransformedVertices();
-    std::cout << std::endl << vPoints << std::endl;
     pathPoints.clear();
     for ( size_t index = 0; index < vPoints.cols(); index++ )
         pathPoints.append(QPointF(vPoints(0, index), vPoints(1,index)));

@@ -77,7 +77,7 @@
         <item>
          <widget class="QSpinBox" name="recurse">
           <property name="value">
-           <number>0</number>
+           <number>4</number>
           </property>
          </widget>
         </item>
