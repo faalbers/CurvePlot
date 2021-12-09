@@ -9,11 +9,8 @@ ChaikinCurve::ChaikinCurve(MH::Node *chaikinCurveNode)
     , chaikinCurveModel_(chaikinCurveNode->getModel().get())
 {
     auto tcPoints = chaikinCurveModel_->getPointArray("cp");
-    std::cout << std::endl << tcPoints.transpose() << std::endl;
     auto transform = chaikinCurveNode_->getTransform();
-    std::cout << std::endl << transform.transpose() << std::endl;
     tcPoints = transform * tcPoints.matrix();
-    std::cout << std::endl << tcPoints.transpose() << std::endl;
     for ( size_t index = 0; index < tcPoints.rows(); index++ )
         controlPoints.append(std::make_shared<PointItem>(QPointF(tcPoints(0,index),tcPoints(1,index)), this));
     updateCurvePath();
@@ -49,8 +46,8 @@ void ChaikinCurve::updateCurvePath()
     // get recalculated path vertices and get them transformed
     auto vPoints = chaikinCurveNode_->getTransformedVertices();
     pathPoints.clear();
-    for ( size_t index = 0; index < vPoints.rows(); index++ )
-        pathPoints.append(QPointF(vPoints(index,0), vPoints(index,1)));
+    for ( size_t index = 0; index < vPoints.cols(); index++ )
+        pathPoints.append(QPointF(vPoints(0, index), vPoints(1,index)));
     
     update();
 }
