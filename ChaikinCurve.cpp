@@ -1,6 +1,8 @@
 #include "ChaikinCurve.hpp"
 #include "Eigen/Dense"
 
+#include <iostream>
+
 ChaikinCurve::ChaikinCurve(MH::Node *chaikinCurveNode)
     : CurveItem(chaikinCurveNode->getModel()->getCount("cpnum"))
     , chaikinCurveNode_(chaikinCurveNode)
@@ -43,6 +45,7 @@ void ChaikinCurve::updateCurvePath()
 
     // get recalculated path vertices and get them transformed
     auto vPoints = chaikinCurveNode_->getTransformedVertices();
+    std::cout << std::endl << vPoints << std::endl;
     pathPoints.clear();
     for ( size_t index = 0; index < vPoints.rows(); index++ )
         pathPoints.append(QPointF(vPoints(index,0), vPoints(index,1)));
