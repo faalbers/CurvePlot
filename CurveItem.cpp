@@ -2,8 +2,7 @@
 #include <QPainter>
 #include <QGraphicsScene>
 
-CurveItem::CurveItem(size_t controlPointNum_)
-    : controlPointNum(controlPointNum_)
+CurveItem::CurveItem()
 {
 }
 
@@ -17,16 +16,6 @@ void CurveItem::removeFromScene(QGraphicsScene *scene)
 {
     for ( auto &controlPoint : controlPoints ) scene->removeItem(controlPoint.get());
     scene->removeItem(this);
-}
-
-void CurveItem::setControlPointNum(size_t &pointNum)
-{
-    controlPointNum =  pointNum;
-}
-
-size_t CurveItem::getControlPointNum() const
-{
-    return controlPointNum;
 }
 
 QRectF CurveItem::boundingRect() const
