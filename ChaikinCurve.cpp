@@ -4,7 +4,7 @@
 #include <iostream>
 
 ChaikinCurve::ChaikinCurve(MH::Node *chaikinCurveNode)
-    : CurveItem(chaikinCurveNode->getModel()->getCount("cpnum"))
+    : CurveItem()
     , chaikinCurveNode_(chaikinCurveNode)
     , chaikinCurveModel_(chaikinCurveNode->getModel().get())
 {
