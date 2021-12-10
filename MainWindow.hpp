@@ -26,11 +26,14 @@ public slots:
     void changeCurveRot(int rot);
 
 private:
+    void resetUi_();
+    
     Ui::MainWindow* ui_;
     QGraphicsScene* graphicsScene_;
     CurveItem*      currentCurve_;
     std::shared_ptr<MH::ModelHierachy> mh_;
     MH::Node        *chaikinNode_;
+    MH::Node        *bsplineNode_;
 };
 
 #endif

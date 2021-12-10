@@ -36,6 +36,11 @@
           <string>Chaikin</string>
          </property>
         </item>
+        <item>
+         <property name="text">
+          <string>BSpline</string>
+         </property>
+        </item>
        </widget>
       </item>
       <item>

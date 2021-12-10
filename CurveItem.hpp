@@ -20,6 +20,7 @@ public:
     virtual void    updateControlPoints() = 0;
     virtual void    updateCurvePath() = 0;
 
+    std::string                         name;
     size_t                              controlPointNum;
     QList<std::shared_ptr<PointItem>>   controlPoints;
     QList<QPointF>                      pathPoints;

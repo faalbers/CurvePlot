@@ -1,9 +1,10 @@
-#include "BezierCurve.hpp"
+#include "BSplineCurve.hpp"
 #include "Eigen/Dense"
 
-BezierCurve::BezierCurve(int controlPointNum_)
-    : CurveItem(controlPointNum_)
+BSplineCurve::BSplineCurve(MH::Node *bsplineCurveNode)
+    : CurveItem(bsplineCurveNode->getModel()->getCount("cpnum"))
 {
+    /*
     auto subAngle = M_PI / (controlPointNum-1);
     for ( int sub = 0; sub < controlPointNum; sub++ ) {
         auto angle = subAngle * sub;
@@ -11,10 +12,12 @@ BezierCurve::BezierCurve(int controlPointNum_)
     }
 
     updateCurve();
+    */
 }
 
-void BezierCurve::updateCurve()
+void BSplineCurve::updateCurve()
 {
+    /*
     pathPoints.clear();
     int subCount = 50;
     for ( int sub = 0; sub <= subCount; sub++) {
@@ -22,9 +25,10 @@ void BezierCurve::updateCurve()
         pathPoints.append(bezier_(t,controlPointNum-1,controlPointNum-1));
     }
     update();
+    */
 }
 
-QPointF BezierCurve::bezier_(double &t, int i, int j) const
+QPointF BSplineCurve::bezier_(double &t, int i, int j) const
 {
     if ( j > 0 ) {
         return ((1.0-t)*bezier_(t,i,j-1) + t*bezier_(t,i-1,j-1));

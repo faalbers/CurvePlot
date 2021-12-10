@@ -8,10 +8,11 @@ ChaikinCurve::ChaikinCurve(MH::Node *chaikinCurveNode)
     , chaikinCurveNode_(chaikinCurveNode)
     , chaikinCurveModel_(chaikinCurveNode->getModel().get())
 {
+    name = chaikinCurveNode->pathName();
     auto tcPoints = chaikinCurveModel_->getPointArray("cp");
     auto transform = chaikinCurveNode_->getTransform();
     tcPoints = transform * tcPoints.matrix();
-    for ( size_t index = 0; index < tcPoints.rows(); index++ )
+    for ( size_t index = 0; index < tcPoints.cols(); index++ )
         controlPoints.append(std::make_shared<PointItem>(QPointF(tcPoints(0,index),tcPoints(1,index)), this));
     updateCurvePath();
 }
