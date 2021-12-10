@@ -25,9 +25,11 @@ public slots:
     void changeCurvePosY(int posX);
     void changeCurveRot(int rot);
 
-private:
-    void resetUi_();
-    
+    void enableTransform();
+    void disableTransform();
+    void resetTransform();
+
+private:    
     Ui::MainWindow* ui_;
     QGraphicsScene* graphicsScene_;
     CurveItem*      currentCurve_;

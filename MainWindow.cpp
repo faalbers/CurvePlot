@@ -11,12 +11,6 @@ MainWindow::MainWindow()
 {
     ui_->setupUi(this);
 
-    //ui_->pointNum->setEnabled(false);
-    //ui_->recurse->setEnabled(false);
-    //ui_->posX->setEnabled(false);
-    //ui_->posY->setEnabled(false);
-    //ui_->rot->setEnabled(false);
-
     graphicsScene_ = new QGraphicsScene(0, 0, 600, 600);
     graphicsScene_->setBackgroundBrush(Qt::gray);
     ui_->curveView->setScene(graphicsScene_);
@@ -27,6 +21,7 @@ MainWindow::MainWindow()
     connect(ui_->posX, SIGNAL(valueChanged(int)), this, SLOT(changeCurvePosX(int)));
     connect(ui_->posY, SIGNAL(valueChanged(int)), this, SLOT(changeCurvePosY(int)));
     connect(ui_->rot, SIGNAL(valueChanged(int)), this, SLOT(changeCurveRot(int)));
+    connect(ui_->resetTransform, SIGNAL(clicked()), this, SLOT(resetTransform()));
 
     // setup chaiking curve
     mh_ = std::make_shared<MH::ModelHierachy>();
@@ -54,23 +49,20 @@ void MainWindow::changeCurveType(const QString &curveType)
         currentCurve_->removeFromScene(graphicsScene_);
         delete currentCurve_;
         currentCurve_ = nullptr;
+        ui_->pointNum->setEnabled(false);
+        ui_->recurse->setEnabled(false);
+        disableTransform();
     }
 
-    // add new curve
+    // add new curve representation
     if ( curveType == "Chaikin") {
-        //resetUi_();
-        //ui_->pointNum->setValue(chaikinNode_->getModel()->getCount("cpnum"));
         ui_->pointNum->setEnabled(true);
-        //ui_->pointNum->setValue(chaikinNode_->getModel()->getCount("recursions"));
-        //ui_->recurse->setEnabled(true);
-        //ui_->posX->setEnabled(true);
-        //ui_->posY->setEnabled(true);
-        //ui_->rot->setEnabled(true);
+        ui_->recurse->setEnabled(true);
+        enableTransform();
         chaikinNode_->getModel()->setCount("cpnum", ui_->pointNum->value());
         currentCurve_ = new ChaikinCurve(chaikinNode_);
         currentCurve_->addToScene(graphicsScene_);
     } else if ( curveType == "BSpline") {
-        //resetUi_();
     } else return;
 }
 
@@ -120,16 +112,27 @@ void MainWindow::changeCurveRot(int rot)
     }
 }
 
-void MainWindow::resetUi_()
+void MainWindow::resetTransform()
 {
-        ui_->pointNum->setValue(0);
+    ui_->posX->setValue(0);
+    ui_->posY->setValue(0);
+    ui_->rot->setValue(0);
+}
+
+void MainWindow::disableTransform()
+{
         ui_->pointNum->setEnabled(false);
-        ui_->recurse->setValue(0);
         ui_->recurse->setEnabled(false);
-        ui_->posX->setValue(0);
         ui_->posX->setEnabled(false);
-        ui_->posY->setValue(0);
         ui_->posY->setEnabled(false);
-        ui_->rot->setValue(0);
         ui_->rot->setEnabled(false);
+        ui_->resetTransform->setEnabled(false);
+}
+
+void MainWindow::enableTransform()
+{
+        ui_->posX->setEnabled(true);
+        ui_->posY->setEnabled(true);
+        ui_->rot->setEnabled(true);
+        ui_->resetTransform->setEnabled(true);
 }
