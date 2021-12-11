@@ -2,20 +2,28 @@
 #include <QPainter>
 #include <QGraphicsScene>
 
-CurveItem::CurveItem()
+CurveItem::CurveItem(MH::Node *curveNode)
+    : name_(curveNode->pathName())
+    , curveNode_(curveNode)
+    , curveModel_(curveNode->getModel().get())
 {
 }
 
 void CurveItem::addToScene(QGraphicsScene *scene)
 {
     scene->addItem(this);
-    for ( auto &controlPoint : controlPoints ) scene->addItem(controlPoint.get());
+    for ( auto &pointItem : pointItems_ ) scene->addItem(pointItem.get());
 }
 
 void CurveItem::removeFromScene(QGraphicsScene *scene)
 {
-    for ( auto &controlPoint : controlPoints ) scene->removeItem(controlPoint.get());
+    for ( auto &pointItem : pointItems_ ) scene->removeItem(pointItem.get());
     scene->removeItem(this);
+}
+
+const std::string &CurveItem::getName() const
+{
+    return name_;
 }
 
 QRectF CurveItem::boundingRect() const
@@ -28,7 +36,7 @@ void CurveItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     // create curve path
     QPainterPath path;
     int index = 0;
-    for ( auto &pathPoint : pathPoints ) {
+    for ( auto &pathPoint : pathPoints_ ) {
         if ( index == 0)
             path.moveTo(pathPoint);
         else

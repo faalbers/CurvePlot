@@ -2,20 +2,19 @@
 #define CURVEPLOT_CHAIKINCURVE
 
 #include "CurveItem.hpp"
-#include "ModelHierarchy.hpp"
 
 class ChaikinCurve : public CurveItem
 {
 public:
     ChaikinCurve(MH::Node *chaikinCurve);
 
-    void updateCurve();
-    void updateControlPoints();
-    void updateCurvePath();
+    void    pointItemChanged();
+    void    transformChanged();
+    void    modelChanged();
 
 private:
-    MH::Node    *chaikinCurveNode_;
-    MH::Model   *chaikinCurveModel_;
+    void    createPointItems_();
+    void    updateCurvePath_();
 };
 
 #endif

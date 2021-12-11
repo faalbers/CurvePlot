@@ -2,17 +2,23 @@
 #define CURVEPLOT_BSPLINECURVE
 
 #include "CurveItem.hpp"
-#include "ModelHierarchy.hpp"
 
 class BSplineCurve : public CurveItem
 {
 public:
     BSplineCurve(MH::Node *bsplineCurveNode);
 
-    void updateCurve();
+    void    createPointItems();
+
+    void    pointItemChanged();
+    void    transformChanged();
+    void    modelChanged();
 
 private:
-    QPointF bezier_(double &t, int i, int j) const;
+    void    createPointItems_();
+    void    updateCurvePath_();
+    Eigen::Array4Xd getPointItemArray_();
+    QPointF         bezier_(double &t, int i, int j) const;
 };
 
 #endif

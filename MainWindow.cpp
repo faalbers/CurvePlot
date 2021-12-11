@@ -3,6 +3,9 @@
 #include <QGraphicsView>
 
 #include "ChaikinCurve.hpp"
+#include "BSplineCurve.hpp"
+
+#include <iostream>
 
 MainWindow::MainWindow()
     : ui_(new Ui::MainWindow)
@@ -63,6 +66,11 @@ void MainWindow::changeCurveType(const QString &curveType)
         currentCurve_ = new ChaikinCurve(chaikinNode_);
         currentCurve_->addToScene(graphicsScene_);
     } else if ( curveType == "BSpline") {
+        ui_->pointNum->setEnabled(true);
+        enableTransform();
+        bsplineNode_->getModel()->setCount("cpnum", ui_->pointNum->value());
+        currentCurve_ = new BSplineCurve(bsplineNode_);
+        currentCurve_->addToScene(graphicsScene_);
     } else return;
 }
 
@@ -76,10 +84,10 @@ void MainWindow::changeCurvePointNum(int pointNum)
 void MainWindow::changeCurveRecurse(int recurse)
 {
     if ( currentCurve_ != nullptr ) {
-        if ( currentCurve_->name == "/World/Chaikin" ) {
+        if ( currentCurve_->getName() == "/World/Chaikin" ) {
             chaikinNode_->getModel()->setCount("recursions", recurse);
-            currentCurve_->updateCurvePath();
-        } else if ( currentCurve_->name == "/World/BSpline" ) {
+            currentCurve_->modelChanged();
+        } else if ( currentCurve_->getName() == "/World/BSpline" ) {
         }
     }
 }
@@ -87,18 +95,18 @@ void MainWindow::changeCurveRecurse(int recurse)
 void MainWindow::changeCurvePosX(int posX)
 {
     if ( currentCurve_ != nullptr ) {
-        if ( currentCurve_->name == "/World/Chaikin" ) chaikinNode_->setTx(posX);
-        else if ( currentCurve_->name == "/World/BSpline" ) bsplineNode_->setTx(posX);
-        currentCurve_->updateControlPoints();
+        if ( currentCurve_->getName() == "/World/Chaikin" ) chaikinNode_->setTx(posX);
+        else if ( currentCurve_->getName() == "/World/BSpline" ) bsplineNode_->setTx(posX);
+        currentCurve_->transformChanged();
     }
 }
 
 void MainWindow::changeCurvePosY(int posY)
 {
     if ( currentCurve_ != nullptr ) {
-        if ( currentCurve_->name == "/World/Chaikin" ) chaikinNode_->setTy(posY);
-        else if ( currentCurve_->name == "/World/BSpline" ) bsplineNode_->setTy(posY);
-        currentCurve_->updateControlPoints();
+        if ( currentCurve_->getName() == "/World/Chaikin" ) chaikinNode_->setTy(posY);
+        else if ( currentCurve_->getName() == "/World/BSpline" ) bsplineNode_->setTy(posY);
+        currentCurve_->transformChanged();
     }
 }
 
@@ -106,9 +114,9 @@ void MainWindow::changeCurveRot(int rot)
 {
     auto rotPi = (M_PI / 1000) * rot;
     if ( currentCurve_ != nullptr ) {
-        if ( currentCurve_->name == "/World/Chaikin" ) chaikinNode_->setRz(rotPi);
-        else if ( currentCurve_->name == "/World/BSpline" ) bsplineNode_->setRz(rotPi);
-        currentCurve_->updateControlPoints();
+        if ( currentCurve_->getName() == "/World/Chaikin" ) chaikinNode_->setRz(rotPi);
+        else if ( currentCurve_->getName() == "/World/BSpline" ) bsplineNode_->setRz(rotPi);
+        currentCurve_->transformChanged();
     }
 }
 

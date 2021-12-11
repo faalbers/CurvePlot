@@ -3,6 +3,7 @@
 
 #include <QGraphicsItem>
 #include <memory>
+#include "ModelHierarchy.hpp"
 #include "PointItem.hpp"
 
 class CurveItem : public QGraphicsItem
@@ -11,17 +12,22 @@ class CurveItem : public QGraphicsItem
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 public:
-    CurveItem();
+    CurveItem(MH::Node *curveNode);
 
-    void            addToScene(QGraphicsScene *scene);
-    void            removeFromScene(QGraphicsScene *scene);
-    virtual void    updateControlPoints() = 0;
-    virtual void    updateCurvePath() = 0;
+    void                addToScene(QGraphicsScene *scene);
+    void                removeFromScene(QGraphicsScene *scene);
+    const std::string   &getName() const;
 
-    std::string                         name;
-    size_t                              controlPointNum;
-    QList<std::shared_ptr<PointItem>>   controlPoints;
-    QList<QPointF>                      pathPoints;
+    virtual void        pointItemChanged() = 0;
+    virtual void        transformChanged() = 0;
+    virtual void        modelChanged() = 0;
+
+protected:
+    std::string                         name_;
+    MH::Node                            *curveNode_;
+    MH::Model                           *curveModel_;
+    QList<std::shared_ptr<PointItem>>   pointItems_;
+    QList<QPointF>                      pathPoints_;
 };
 
 #endif
