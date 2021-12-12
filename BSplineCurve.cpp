@@ -25,7 +25,44 @@ BSplineCurve::BSplineCurve(MH::Node *bsplineCurveNode)
 
 void BSplineCurve::pointItemChanged()
 {
-    std::cout << "BSplineCurve::pointItemChanged\n";
+    // get control points and feed them transform inverted
+    Eigen::Array4Xd piPoints(4,pointItems_.size());
+    piPoints.row(2).setZero();
+    piPoints.row(3).setOnes();
+    size_t index = 0;
+    for ( auto &pointItem : pointItems_ ) {
+        piPoints(0,index) = pointItem->pos().x()+5;
+        piPoints(1,index) = pointItem->pos().y()+5;
+        index ++;
+    }
+
+    auto transform = curveNode_->getTransformInverse();
+    piPoints = transform * piPoints.matrix();
+
+    // get cp points from model
+    auto cpPoints = curveModel_->getPointArray("cp");
+    auto tangleValues = curveModel_->getValueArray("tangle");
+    auto tsizeValues = curveModel_->getValueArray("tsize");
+    size_t picpIndex, pitIndex;
+    Eigen::Vector3d xVector; xVector.setZero(); xVector(0) = 1;
+    Eigen::Vector3d tVector;
+    for ( size_t cpIndex = 0; cpIndex < cpPoints.cols(); cpIndex++ ) {
+        picpIndex = cpIndex*2;
+        pitIndex = picpIndex+1;
+        cpPoints.col(cpIndex) = piPoints.col(picpIndex);
+        auto tVectorD = piPoints.col(pitIndex)-piPoints.col(picpIndex);
+        tVector(0) = tVectorD(0); tVector(1) = tVectorD(1); tVector(2) = tVectorD(2); 
+        tsizeValues(cpIndex) = tVector.norm();
+        tVector.normalize();
+        auto cross =xVector.cross(tVector)(2);
+        auto sign = (double)(cross > 0) - (double)(cross < 0);
+        tangleValues(cpIndex) = acos(tVector.dot(xVector))*sign;
+    }
+    curveModel_->setPointArray("cp", cpPoints);
+    curveModel_->setValueArray("tangle", tangleValues);
+    curveModel_->setValueArray("tsize", tsizeValues);
+
+    updateCurvePath_();
 }
 
 void BSplineCurve::transformChanged()
@@ -101,30 +138,3 @@ Eigen::Array4Xd BSplineCurve::getPointItemArray_()
     }
     return pointItemArray;
 }
-/*
-void BSplineCurve::updateControlPoints()
-{
-    auto transform = bsplineCurveNode_->getTransform();
-    Eigen::Array4Xd newcPoints = transform * controlPoints.matrix();
-    size_t index = 0;
-    for ( auto &pointItem : pointItems ) {
-        pointItem->setPos(newcPoints(0,index)-5,newcPoints(1,index)-5);
-        if ( newcPoints(2,index) > 0 ) pointItem->setBrush(QBrush(Qt::white));
-        else pointItem->setBrush(QBrush(Qt::black));
-        index ++;
-    }
-}
-
-void BSplineCurve::updateCurvePath()
-{
-}
-
-QPointF BSplineCurve::bezier_(double &t, int i, int j) const
-{
-    if ( j > 0 ) {
-        return ((1.0-t)*bezier_(t,i,j-1) + t*bezier_(t,i-1,j-1));
-    } else {
-        return QPointF(pointItems[i]->pos().x()+5,pointItems[i]->pos().y()+5);
-    }
-}
-*/
