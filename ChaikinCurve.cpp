@@ -7,34 +7,18 @@ ChaikinCurve::ChaikinCurve(MH::Node *chaikinCurveNode)
     updateCurvePath_();
 }
 
-void ChaikinCurve::pointItemChanged()
+void ChaikinCurve::pointItemChanged(size_t itemIndex, QPointF offset)
 {
-    // get control points and feed them transform inverted
-    auto cpPoints = curveModel_->getPointArray("cp");
-    size_t index = 0;
-    for ( auto &pointItem : pointItems_ ) {
-        cpPoints(0,index) = pointItem->pos().x()+5;
-        cpPoints(1,index) = pointItem->pos().y()+5;
-        index ++;
-    }
-
-    auto transform = curveNode_->getTransformInverse();
-    cpPoints = transform * cpPoints.matrix();
-
-    // update model with new cp points
-    curveModel_->setPointArray("cp", cpPoints);
-
-    updateCurvePath_();
+    auto cpPoints = getCPPoints_();
+    cpPoints(0, itemIndex) += offset.x();
+    cpPoints(1, itemIndex) += offset.y();
+    setCPPoints_(cpPoints);
+    transformChanged();
 }
 
 void ChaikinCurve::transformChanged()
 {
-    // get MH and model info
-    auto cpPoints = curveModel_->getPointArray("cp");
-    auto transform = curveNode_->getTransform();
-
-    // transform to 2D screen
-    cpPoints = transform * cpPoints.matrix();
+    auto cpPoints = getCPPoints_();
 
     // set pointItems from transformed cpPoints
     size_t index = 0;
@@ -53,25 +37,43 @@ void ChaikinCurve::modelChanged()
 void ChaikinCurve::createPointItems_()
 {
     // get MH and model info
-    auto cpPoints = curveModel_->getPointArray("cp");
-    auto transform = curveNode_->getTransform();
-
-    // transform to 2D screen
-    cpPoints = transform * cpPoints.matrix();
+    auto cpPoints = getCPPoints_();
 
     // create pointItems from cpPoints
-    for ( size_t index = 0; index < cpPoints.cols(); index++ )
-        pointItems_.append(std::make_shared<PointItem>(QPointF(cpPoints(0,index),cpPoints(1,index)), this));
+    for ( size_t index = 0; index < cpPoints.cols(); index++ ) {
+        pointItems_.append(std::make_shared<PointItem>(QPointF(cpPoints(0,index),cpPoints(1,index)), this, index));
+    }
 }
 
 void ChaikinCurve::updateCurvePath_()
 {
-    // get recalculated path vertices and get them transformed
-    auto vPoints = curveNode_->getTransformedVertices();
-    pathPoints_.clear();
-    for ( size_t index = 0; index < vPoints.cols(); index++ )
-        pathPoints_.append(QPointF(vPoints(0, index), vPoints(1,index)));
+    auto vertices = curveNode_->getTransformedVertices();
 
-    // repaint curve    
+    pathPoints_.clear();
+    for ( size_t index = 0; index < vertices.cols(); index++ )
+        pathPoints_.append(QPointF(vertices(0, index), vertices(1,index)));
+
     update();
+}
+
+Eigen::Array4Xd ChaikinCurve::getCPPoints_() const
+{
+    // get MH and model info
+    auto points = curveModel_->getPointArray("cp");
+    auto transform = curveNode_->getTransform();
+
+    // transform to 2D screen
+    points = transform * points.matrix();
+
+    return points;
+}
+
+void ChaikinCurve::setCPPoints_(Eigen::Array4Xd cpPoints)
+{
+    // transform to model transform
+    auto transform = curveNode_->getTransformInverse();
+    cpPoints = transform * cpPoints.matrix();
+    
+    // put array back
+    curveModel_->setPointArray("cp", cpPoints);
 }

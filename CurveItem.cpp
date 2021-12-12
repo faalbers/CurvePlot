@@ -1,6 +1,7 @@
 #include "CurveItem.hpp"
 #include <QPainter>
 #include <QGraphicsScene>
+#include <iostream>
 
 CurveItem::CurveItem(MH::Node *curveNode)
     : name_(curveNode->pathName())
@@ -47,4 +48,12 @@ void CurveItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     // paint curve path
     painter->setPen(Qt::white);
     painter->drawPath(path);
+}
+
+void CurveItem::error_(std::string message) const
+{
+    std::cout << "CurveItem:" << std::endl;
+    std::cout << "-> " << message << std::endl;
+    std::cout << "exit application ..." << std::endl;
+    exit(1);
 }

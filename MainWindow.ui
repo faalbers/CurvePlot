@@ -75,12 +75,12 @@
         <item>
          <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>Recurse</string>
+           <string>Subdiv</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="recurse">
+         <widget class="QSpinBox" name="subdiv">
           <property name="value">
            <number>4</number>
           </property>
@@ -93,10 +93,10 @@
         <item>
          <widget class="QSlider" name="posX">
           <property name="minimum">
-           <number>-300</number>
+           <number>-1000</number>
           </property>
           <property name="maximum">
-           <number>300</number>
+           <number>1000</number>
           </property>
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -106,10 +106,10 @@
         <item>
          <widget class="QSlider" name="posY">
           <property name="minimum">
-           <number>-300</number>
+           <number>-1000</number>
           </property>
           <property name="maximum">
-           <number>300</number>
+           <number>1000</number>
           </property>
           <property name="orientation">
            <enum>Qt::Vertical</enum>

@@ -10,15 +10,17 @@ public:
 
     void    createPointItems();
 
-    void    pointItemChanged();
+    void    pointItemChanged(size_t itemIndex, QPointF offset);
     void    transformChanged();
     void    modelChanged();
 
 private:
     void    createPointItems_();
     void    updateCurvePath_();
-    Eigen::Array4Xd getPointItemArray_();
-    QPointF         bezier_(double &t, int i, int j) const;
+
+    Eigen::Array4Xd getCPPoints_() const;
+    void            setCPPoints_(Eigen::Array4Xd cpPoints);
+    //Eigen::Array4Xd getPointItemArray_();
 };
 
 #endif

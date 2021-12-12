@@ -5,8 +5,6 @@
 #include "ChaikinCurve.hpp"
 #include "BSplineCurve.hpp"
 
-#include <iostream>
-
 MainWindow::MainWindow()
     : ui_(new Ui::MainWindow)
     , graphicsScene_(nullptr)
@@ -20,17 +18,22 @@ MainWindow::MainWindow()
 
     connect(ui_->curveType, SIGNAL(currentTextChanged(const QString &)), this, SLOT(changeCurveType(const QString &)));
     connect(ui_->pointNum, SIGNAL(valueChanged(int)), this, SLOT(changeCurvePointNum(int)));
-    connect(ui_->recurse, SIGNAL(valueChanged(int)), this, SLOT(changeCurveRecurse(int)));
-    connect(ui_->posX, SIGNAL(valueChanged(int)), this, SLOT(changeCurvePosX(int)));
-    connect(ui_->posY, SIGNAL(valueChanged(int)), this, SLOT(changeCurvePosY(int)));
-    connect(ui_->rot, SIGNAL(valueChanged(int)), this, SLOT(changeCurveRot(int)));
+    connect(ui_->subdiv, SIGNAL(valueChanged(int)), this, SLOT(changeCurveSubdiv(int)));
+
+    //connect(ui_->posX, SIGNAL(valueChanged(int)), this, SLOT(changeCurvePosX(int)));
+    //connect(ui_->posY, SIGNAL(valueChanged(int)), this, SLOT(changeCurvePosY(int)));
+    //connect(ui_->rot, SIGNAL(valueChanged(int)), this, SLOT(changeCurveRotZ(int)));
+    connect(ui_->posX, SIGNAL(valueChanged(int)), this, SLOT(changeCurveRotX(int)));
+    connect(ui_->posY, SIGNAL(valueChanged(int)), this, SLOT(changeCurveRotY(int)));
+    connect(ui_->rot, SIGNAL(valueChanged(int)), this, SLOT(changeCurveRotZ(int)));
+
     connect(ui_->resetTransform, SIGNAL(clicked()), this, SLOT(resetTransform()));
 
     // setup chaiking curve
     mh_ = std::make_shared<MH::ModelHierachy>();
     mh_->setFrameAxisY(0.0,-1.0,0.0);
     mh_->setFramePosition(300.0,300.0,0.0);
-    auto chaikin = std::make_shared<MH::ChaikinCurve>(ui_->pointNum->value(),ui_->recurse->value());
+    auto chaikin = std::make_shared<MH::ChaikinCurve>(ui_->pointNum->value(),ui_->subdiv->value());
     chaikinNode_ = mh_->addModel(chaikin, "Chaikin");
     auto bspline = std::make_shared<MH::BSpline>(ui_->pointNum->value());
     bsplineNode_ = mh_->addModel(bspline, "BSpline");
@@ -53,14 +56,14 @@ void MainWindow::changeCurveType(const QString &curveType)
         delete currentCurve_;
         currentCurve_ = nullptr;
         ui_->pointNum->setEnabled(false);
-        ui_->recurse->setEnabled(false);
+        ui_->subdiv->setEnabled(false);
         disableTransform();
     }
 
     // add new curve representation
     if ( curveType == "Chaikin") {
         ui_->pointNum->setEnabled(true);
-        ui_->recurse->setEnabled(true);
+        ui_->subdiv->setEnabled(true);
         enableTransform();
         chaikinNode_->getModel()->setCount("cpnum", ui_->pointNum->value());
         currentCurve_ = new ChaikinCurve(chaikinNode_);
@@ -81,11 +84,11 @@ void MainWindow::changeCurvePointNum(int pointNum)
     }
 }
 
-void MainWindow::changeCurveRecurse(int recurse)
+void MainWindow::changeCurveSubdiv(int subdiv)
 {
     if ( currentCurve_ != nullptr ) {
         if ( currentCurve_->getName() == "/World/Chaikin" ) {
-            chaikinNode_->getModel()->setCount("recursions", recurse);
+            chaikinNode_->getModel()->setCount("subdiv", subdiv);
             currentCurve_->modelChanged();
         } else if ( currentCurve_->getName() == "/World/BSpline" ) {
         }
@@ -110,7 +113,27 @@ void MainWindow::changeCurvePosY(int posY)
     }
 }
 
-void MainWindow::changeCurveRot(int rot)
+void MainWindow::changeCurveRotX(int rot)
+{
+    auto rotPi = (M_PI / 1000) * rot;
+    if ( currentCurve_ != nullptr ) {
+        if ( currentCurve_->getName() == "/World/Chaikin" ) chaikinNode_->setRx(rotPi);
+        else if ( currentCurve_->getName() == "/World/BSpline" ) bsplineNode_->setRx(rotPi);
+        currentCurve_->transformChanged();
+    }
+}
+
+void MainWindow::changeCurveRotY(int rot)
+{
+    auto rotPi = (M_PI / 1000) * rot;
+    if ( currentCurve_ != nullptr ) {
+        if ( currentCurve_->getName() == "/World/Chaikin" ) chaikinNode_->setRy(rotPi);
+        else if ( currentCurve_->getName() == "/World/BSpline" ) bsplineNode_->setRy(rotPi);
+        currentCurve_->transformChanged();
+    }
+}
+
+void MainWindow::changeCurveRotZ(int rot)
 {
     auto rotPi = (M_PI / 1000) * rot;
     if ( currentCurve_ != nullptr ) {
@@ -130,7 +153,7 @@ void MainWindow::resetTransform()
 void MainWindow::disableTransform()
 {
         ui_->pointNum->setEnabled(false);
-        ui_->recurse->setEnabled(false);
+        ui_->subdiv->setEnabled(false);
         ui_->posX->setEnabled(false);
         ui_->posY->setEnabled(false);
         ui_->rot->setEnabled(false);

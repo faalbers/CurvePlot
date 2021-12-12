@@ -20,10 +20,12 @@ public:
 public slots:
     void changeCurveType(const QString &curveType);
     void changeCurvePointNum(int pointNum);
-    void changeCurveRecurse(int recurse);
+    void changeCurveSubdiv(int recurse);
     void changeCurvePosX(int posX);
     void changeCurvePosY(int posX);
-    void changeCurveRot(int rot);
+    void changeCurveRotX(int rot);
+    void changeCurveRotY(int rot);
+    void changeCurveRotZ(int rot);
 
     void enableTransform();
     void disableTransform();

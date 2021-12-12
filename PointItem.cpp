@@ -4,8 +4,10 @@
 #include <QBrush>
 #include <QGraphicsSceneMouseEvent>
 
-PointItem::PointItem(QPointF position, CurveItem *curve_)
+PointItem::PointItem(QPointF position, CurveItem *curve_, size_t index_)
     : curve(curve_)
+    , index(index_)
+
 {
     setBrush(QBrush(Qt::yellow));
     setRect(0, 0, 10, 10);
@@ -25,6 +27,7 @@ void PointItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 
 void PointItem::mouseMoveEvent (QGraphicsSceneMouseEvent* event)
 {
+    auto offset = event->scenePos()-event->lastScenePos();
     setPos(event->scenePos()-QPointF(5, 5));
-    curve->pointItemChanged();
+    curve->pointItemChanged(index, offset);
 }
