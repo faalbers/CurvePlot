@@ -20,12 +20,12 @@ MainWindow::MainWindow()
     connect(ui_->pointNum, SIGNAL(valueChanged(int)), this, SLOT(changeCurvePointNum(int)));
     connect(ui_->subdiv, SIGNAL(valueChanged(int)), this, SLOT(changeCurveSubdiv(int)));
 
-    //connect(ui_->posX, SIGNAL(valueChanged(int)), this, SLOT(changeCurvePosX(int)));
-    //connect(ui_->posY, SIGNAL(valueChanged(int)), this, SLOT(changeCurvePosY(int)));
-    //connect(ui_->rot, SIGNAL(valueChanged(int)), this, SLOT(changeCurveRotZ(int)));
-    connect(ui_->posX, SIGNAL(valueChanged(int)), this, SLOT(changeCurveRotX(int)));
-    connect(ui_->posY, SIGNAL(valueChanged(int)), this, SLOT(changeCurveRotY(int)));
-    connect(ui_->rot, SIGNAL(valueChanged(int)), this, SLOT(changeCurveRotZ(int)));
+    connect(ui_->tx, SIGNAL(valueChanged(int)), this, SLOT(changeCurvePosX(int)));
+    connect(ui_->ty, SIGNAL(valueChanged(int)), this, SLOT(changeCurvePosY(int)));
+    connect(ui_->tz, SIGNAL(valueChanged(int)), this, SLOT(changeCurvePosZ(int)));
+    connect(ui_->rx, SIGNAL(valueChanged(int)), this, SLOT(changeCurveRotX(int)));
+    connect(ui_->ry, SIGNAL(valueChanged(int)), this, SLOT(changeCurveRotY(int)));
+    connect(ui_->rz, SIGNAL(valueChanged(int)), this, SLOT(changeCurveRotZ(int)));
 
     connect(ui_->resetTransform, SIGNAL(clicked()), this, SLOT(resetTransform()));
 
@@ -33,10 +33,11 @@ MainWindow::MainWindow()
     mh_ = std::make_shared<MH::ModelHierachy>();
     mh_->setFrameAxisY(0.0,-1.0,0.0);
     mh_->setFramePosition(300.0,300.0,0.0);
+    parentNode_ = mh_->addParent("Parent");
     auto chaikin = std::make_shared<MH::ChaikinCurve>(ui_->pointNum->value(),ui_->subdiv->value());
-    chaikinNode_ = mh_->addModel(chaikin, "Chaikin");
-    auto bspline = std::make_shared<MH::BSpline>(ui_->pointNum->value());
-    bsplineNode_ = mh_->addModel(bspline, "BSpline");
+    chaikinNode_ = mh_->addModel(chaikin, "Chaikin", parentNode_);
+    auto bspline = std::make_shared<MH::BSpline>(ui_->pointNum->value(),ui_->subdiv->value());
+    bsplineNode_ = mh_->addModel(bspline, "BSpline", parentNode_);
 
     changeCurveType(ui_->curveType->currentText());
 
@@ -70,6 +71,7 @@ void MainWindow::changeCurveType(const QString &curveType)
         currentCurve_->addToScene(graphicsScene_);
     } else if ( curveType == "BSpline") {
         ui_->pointNum->setEnabled(true);
+        ui_->subdiv->setEnabled(true);
         enableTransform();
         bsplineNode_->getModel()->setCount("cpnum", ui_->pointNum->value());
         currentCurve_ = new BSplineCurve(bsplineNode_);
@@ -86,84 +88,86 @@ void MainWindow::changeCurvePointNum(int pointNum)
 
 void MainWindow::changeCurveSubdiv(int subdiv)
 {
-    if ( currentCurve_ != nullptr ) {
-        if ( currentCurve_->getName() == "/World/Chaikin" ) {
-            chaikinNode_->getModel()->setCount("subdiv", subdiv);
-            currentCurve_->modelChanged();
-        } else if ( currentCurve_->getName() == "/World/BSpline" ) {
-        }
-    }
+    chaikinNode_->getModel()->setCount("subdiv", subdiv);
+    bsplineNode_->getModel()->setCount("subdiv", subdiv);
+    if ( currentCurve_ != nullptr ) currentCurve_->modelChanged();
 }
 
-void MainWindow::changeCurvePosX(int posX)
+void MainWindow::changeCurvePosX(int pos)
 {
-    if ( currentCurve_ != nullptr ) {
-        if ( currentCurve_->getName() == "/World/Chaikin" ) chaikinNode_->setTx(posX);
-        else if ( currentCurve_->getName() == "/World/BSpline" ) bsplineNode_->setTx(posX);
-        currentCurve_->transformChanged();
-    }
+    auto moveScene = (double) pos * ((double) 300/1000);
+    chaikinNode_->setTx(moveScene);
+    bsplineNode_->setTx(moveScene);
+    if ( currentCurve_ != nullptr ) currentCurve_->transformChanged();
 }
 
-void MainWindow::changeCurvePosY(int posY)
+void MainWindow::changeCurvePosY(int pos)
 {
-    if ( currentCurve_ != nullptr ) {
-        if ( currentCurve_->getName() == "/World/Chaikin" ) chaikinNode_->setTy(posY);
-        else if ( currentCurve_->getName() == "/World/BSpline" ) bsplineNode_->setTy(posY);
-        currentCurve_->transformChanged();
-    }
+    auto moveScene = (double) pos * ((double) 300/1000);
+    chaikinNode_->setTy(moveScene);
+    bsplineNode_->setTy(moveScene);
+    if ( currentCurve_ != nullptr ) currentCurve_->transformChanged();
+}
+
+void MainWindow::changeCurvePosZ(int pos)
+{
+    auto moveScene = (double) pos * ((double) 300/1000);
+    chaikinNode_->setTz(moveScene);
+    bsplineNode_->setTz(moveScene);
+    if ( currentCurve_ != nullptr ) currentCurve_->transformChanged();
 }
 
 void MainWindow::changeCurveRotX(int rot)
 {
     auto rotPi = (M_PI / 1000) * rot;
-    if ( currentCurve_ != nullptr ) {
-        if ( currentCurve_->getName() == "/World/Chaikin" ) chaikinNode_->setRx(rotPi);
-        else if ( currentCurve_->getName() == "/World/BSpline" ) bsplineNode_->setRx(rotPi);
-        currentCurve_->transformChanged();
-    }
+    parentNode_->setRx(rotPi);
+    if ( currentCurve_ != nullptr ) currentCurve_->transformChanged();
 }
 
 void MainWindow::changeCurveRotY(int rot)
 {
     auto rotPi = (M_PI / 1000) * rot;
-    if ( currentCurve_ != nullptr ) {
-        if ( currentCurve_->getName() == "/World/Chaikin" ) chaikinNode_->setRy(rotPi);
-        else if ( currentCurve_->getName() == "/World/BSpline" ) bsplineNode_->setRy(rotPi);
-        currentCurve_->transformChanged();
-    }
+    parentNode_->setRy(rotPi);
+    if ( currentCurve_ != nullptr ) currentCurve_->transformChanged();
 }
 
 void MainWindow::changeCurveRotZ(int rot)
 {
     auto rotPi = (M_PI / 1000) * rot;
-    if ( currentCurve_ != nullptr ) {
-        if ( currentCurve_->getName() == "/World/Chaikin" ) chaikinNode_->setRz(rotPi);
-        else if ( currentCurve_->getName() == "/World/BSpline" ) bsplineNode_->setRz(rotPi);
-        currentCurve_->transformChanged();
-    }
+    parentNode_->setRz(rotPi);
+    if ( currentCurve_ != nullptr ) currentCurve_->transformChanged();
 }
 
 void MainWindow::resetTransform()
 {
-    ui_->posX->setValue(0);
-    ui_->posY->setValue(0);
-    ui_->rot->setValue(0);
+    ui_->tx->setValue(0);
+    ui_->ty->setValue(0);
+    ui_->tz->setValue(0);
+    ui_->rx->setValue(0);
+    ui_->ry->setValue(0);
+    ui_->rz->setValue(0);
 }
 
 void MainWindow::disableTransform()
 {
         ui_->pointNum->setEnabled(false);
         ui_->subdiv->setEnabled(false);
-        ui_->posX->setEnabled(false);
-        ui_->posY->setEnabled(false);
-        ui_->rot->setEnabled(false);
+        ui_->tx->setEnabled(false);
+        ui_->ty->setEnabled(false);
+        ui_->tz->setEnabled(false);
+        ui_->rx->setEnabled(false);
+        ui_->ry->setEnabled(false);
+        ui_->rz->setEnabled(false);
         ui_->resetTransform->setEnabled(false);
 }
 
 void MainWindow::enableTransform()
 {
-        ui_->posX->setEnabled(true);
-        ui_->posY->setEnabled(true);
-        ui_->rot->setEnabled(true);
+        ui_->tx->setEnabled(true);
+        ui_->ty->setEnabled(true);
+        ui_->tz->setEnabled(true);
+        ui_->rx->setEnabled(true);
+        ui_->ry->setEnabled(true);
+        ui_->rz->setEnabled(true);
         ui_->resetTransform->setEnabled(true);
 }

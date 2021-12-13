@@ -19,8 +19,6 @@ void ChaikinCurve::pointItemChanged(size_t itemIndex, QPointF offset)
 void ChaikinCurve::transformChanged()
 {
     auto cpPoints = getCPPoints_();
-
-    // set pointItems from transformed cpPoints
     size_t index = 0;
     for ( auto &pointItem : pointItems_ ) {
         pointItem->setPos(cpPoints(0,index)-5,cpPoints(1,index)-5);
@@ -31,7 +29,7 @@ void ChaikinCurve::transformChanged()
 
 void ChaikinCurve::modelChanged()
 {
-    updateCurvePath_();
+    transformChanged();
 }
 
 void ChaikinCurve::createPointItems_()

@@ -21,8 +21,9 @@ public slots:
     void changeCurveType(const QString &curveType);
     void changeCurvePointNum(int pointNum);
     void changeCurveSubdiv(int recurse);
-    void changeCurvePosX(int posX);
-    void changeCurvePosY(int posX);
+    void changeCurvePosX(int pos);
+    void changeCurvePosY(int pos);
+    void changeCurvePosZ(int pos);
     void changeCurveRotX(int rot);
     void changeCurveRotY(int rot);
     void changeCurveRotZ(int rot);
@@ -36,6 +37,7 @@ private:
     QGraphicsScene* graphicsScene_;
     CurveItem*      currentCurve_;
     std::shared_ptr<MH::ModelHierachy> mh_;
+    MH::Node        *parentNode_;
     MH::Node        *chaikinNode_;
     MH::Node        *bsplineNode_;
 };
