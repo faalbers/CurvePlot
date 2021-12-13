@@ -29,7 +29,7 @@ const std::string &CurveItem::getName() const
 
 QRectF CurveItem::boundingRect() const
 {
-    return QRectF(-100, -100, 800, 800);
+    return QRectF(0, 0, 1000, 800);
 }
 
 void CurveItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)

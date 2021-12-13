@@ -12,7 +12,7 @@ MainWindow::MainWindow()
 {
     ui_->setupUi(this);
 
-    graphicsScene_ = new QGraphicsScene(0, 0, 600, 600);
+    graphicsScene_ = new QGraphicsScene(0, 0, 1000, 800);
     graphicsScene_->setBackgroundBrush(Qt::gray);
     ui_->curveView->setScene(graphicsScene_);
 
@@ -32,7 +32,7 @@ MainWindow::MainWindow()
     // setup chaiking curve
     mh_ = std::make_shared<MH::ModelHierachy>();
     mh_->setFrameAxisY(0.0,-1.0,0.0);
-    mh_->setFramePosition(300.0,300.0,0.0);
+    mh_->setFramePosition(500.0,400.0,0.0);
     parentNode_ = mh_->addParent("Parent");
     auto chaikin = std::make_shared<MH::ChaikinCurve>(ui_->pointNum->value(),ui_->subdiv->value());
     chaikinNode_ = mh_->addModel(chaikin, "Chaikin", parentNode_);
