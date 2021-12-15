@@ -38,8 +38,10 @@ private:
     CurveItem*      currentCurve_;
     std::shared_ptr<MH::ModelHierachy> mh_;
     MH::Node        *parentNode_;
+    MH::Node        *testBoxNode_;
     MH::Node        *chaikinNode_;
     MH::Node        *bsplineNode_;
+    MH::Node        *cameraNode_;
 };
 
 #endif

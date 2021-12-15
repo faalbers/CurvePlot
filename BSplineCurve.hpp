@@ -6,7 +6,7 @@
 class BSplineCurve : public CurveItem
 {
 public:
-    BSplineCurve(MH::Node *bsplineCurveNode);
+    BSplineCurve(MH::Node *bsplineCurveNode, MH::Node *cameraNode);
 
     void    pointItemChanged(size_t itemIndex, QPointF offset);
     void    transformChanged();

@@ -1,8 +1,8 @@
 #include "BSplineCurve.hpp"
 #include <QBrush>
 
-BSplineCurve::BSplineCurve(MH::Node *bsplineCurveNode)
-    : CurveItem(bsplineCurveNode)
+BSplineCurve::BSplineCurve(MH::Node *bsplineCurveNode, MH::Node *cameraNode)
+    : CurveItem(bsplineCurveNode, cameraNode)
 {
     createPointItems_();
     updateCurvePath_();

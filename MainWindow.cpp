@@ -2,6 +2,7 @@
 #include "./ui_MainWindow.h"
 #include <QGraphicsView>
 
+#include "TestBox.hpp"
 #include "ChaikinCurve.hpp"
 #include "BSplineCurve.hpp"
 
@@ -35,11 +36,20 @@ MainWindow::MainWindow()
     mh_ = std::make_shared<MH::ModelHierachy>();
     mh_->setFrameAxisY(0.0,-1.0,0.0);
     mh_->setFramePosition(500.0,400.0,0.0);
+
     parentNode_ = mh_->addParent("Parent");
+
+    auto testBox = std::make_shared<MH::TestBox>();
+    testBoxNode_ = mh_->addModel(testBox, "TestBox", parentNode_);
+
     auto chaikin = std::make_shared<MH::ChaikinCurve>(ui_->pointNum->value(),ui_->subdiv->value());
     chaikinNode_ = mh_->addModel(chaikin, "Chaikin", parentNode_);
+
     auto bspline = std::make_shared<MH::BSpline>(ui_->pointNum->value(),ui_->subdiv->value());
     bsplineNode_ = mh_->addModel(bspline, "BSpline", parentNode_);
+
+    auto camera = std::make_shared<MH::PinholeCamera>(1000, -1000, M_PI/2);
+    cameraNode_ = mh_->addModel(camera, "Camera");
 
     changeCurveType(ui_->curveType->currentText());
 
@@ -64,19 +74,23 @@ void MainWindow::changeCurveType(const QString &curveType)
     }
 
     // add new curve representation
-    if ( curveType == "Chaikin") {
+    if ( curveType == "TestBox") {
+        enableTransform();
+        currentCurve_ = new TestBox(testBoxNode_,cameraNode_);
+        currentCurve_->addToScene(graphicsScene_);
+    } else if ( curveType == "Chaikin") {
         ui_->pointNum->setEnabled(true);
         ui_->subdiv->setEnabled(true);
         enableTransform();
         chaikinNode_->getModel()->setCount("cpnum", ui_->pointNum->value());
-        currentCurve_ = new ChaikinCurve(chaikinNode_);
+        currentCurve_ = new ChaikinCurve(chaikinNode_,cameraNode_);
         currentCurve_->addToScene(graphicsScene_);
     } else if ( curveType == "BSpline") {
         ui_->pointNum->setEnabled(true);
         ui_->subdiv->setEnabled(true);
         enableTransform();
         bsplineNode_->getModel()->setCount("cpnum", ui_->pointNum->value());
-        currentCurve_ = new BSplineCurve(bsplineNode_);
+        currentCurve_ = new BSplineCurve(bsplineNode_,cameraNode_);
         currentCurve_->addToScene(graphicsScene_);
     } else return;
 }

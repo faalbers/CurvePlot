@@ -1,7 +1,7 @@
 #include "ChaikinCurve.hpp"
 
-ChaikinCurve::ChaikinCurve(MH::Node *chaikinCurveNode)
-    : CurveItem(chaikinCurveNode)
+ChaikinCurve::ChaikinCurve(MH::Node *chaikinCurveNode, MH::Node *cameraNode)
+    : CurveItem(chaikinCurveNode, cameraNode)
 {
     createPointItems_();
     updateCurvePath_();
@@ -45,6 +45,7 @@ void ChaikinCurve::createPointItems_()
 
 void ChaikinCurve::updateCurvePath_()
 {
+    //auto vertices = cameraMatrix_ * curveNode_->getTransformedVertices().matrix();
     auto vertices = curveNode_->getTransformedVertices();
 
     pathPoints_.clear();

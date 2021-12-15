@@ -3,10 +3,12 @@
 #include <QGraphicsScene>
 #include <iostream>
 
-CurveItem::CurveItem(MH::Node *curveNode)
+CurveItem::CurveItem(MH::Node *curveNode, MH::Node *cameraNode)
     : name_(curveNode->pathName())
     , curveNode_(curveNode)
     , curveModel_(curveNode->getModel().get())
+    , cameraNode_(cameraNode)
+    , cameraModel_(cameraNode->getModel().get())
 {
 }
 

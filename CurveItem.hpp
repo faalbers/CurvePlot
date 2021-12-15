@@ -12,7 +12,7 @@ class CurveItem : public QGraphicsItem
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 public:
-    CurveItem(MH::Node *curveNode);
+    CurveItem(MH::Node *curveNode, MH::Node *cameraNode);
 
     void                addToScene(QGraphicsScene *scene);
     void                removeFromScene(QGraphicsScene *scene);
@@ -28,6 +28,8 @@ protected:
     std::string                         name_;
     MH::Node                            *curveNode_;
     MH::Model                           *curveModel_;
+    MH::Node                            *cameraNode_;
+    MH::Model                           *cameraModel_;
     QList<std::shared_ptr<PointItem>>   pointItems_;
     QList<QPointF>                      pathPoints_;
 };

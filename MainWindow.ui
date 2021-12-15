@@ -40,6 +40,11 @@
        <widget class="QComboBox" name="curveType">
         <item>
          <property name="text">
+          <string>TestBox</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>Chaikin</string>
          </property>
         </item>
