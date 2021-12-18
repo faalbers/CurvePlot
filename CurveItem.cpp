@@ -31,7 +31,7 @@ const std::string &CurveItem::getName() const
 
 QRectF CurveItem::boundingRect() const
 {
-    return QRectF(0, 0, 1000, 800);
+    return QRectF(0, 0, CURVEPLOT_SCENE_WIDTH, CURVEPLOT_SCENE_HEIGHT);
 }
 
 void CurveItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)

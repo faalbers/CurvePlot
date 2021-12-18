@@ -6,6 +6,9 @@
 #include "ModelHierarchy.hpp"
 #include "PointItem.hpp"
 
+#define CURVEPLOT_SCENE_WIDTH 800
+#define CURVEPLOT_SCENE_HEIGHT 800
+
 class CurveItem : public QGraphicsItem
 {
     QRectF boundingRect() const;

@@ -1,5 +1,7 @@
 #include "TestBox.hpp"
 
+#include <iostream>
+
 TestBox::TestBox(MH::Node *testBoxNode, MH::Node *cameraNode)
     : CurveItem(testBoxNode, cameraNode)
 {
@@ -22,8 +24,15 @@ void TestBox::modelChanged()
 
 void TestBox::updateCurvePath_()
 {
-    //auto vertices = cameraMatrix_ * curveNode_->getTransformedVertices().matrix();
-    auto vertices = curveNode_->getTransformedVertices();
+    Eigen::Array4Xd vertices =
+        cameraModel_->getMatrix("project") *
+        curveNode_->getTransformTo(cameraNode_) *
+        curveModel_->getPointArray("vtx").matrix();
+    for ( auto vertex : vertices.colwise() ) vertex /= vertex(3);
+
+    Eigen::Matrix4d screenMM = MH::ModelHierachy::screenTransform(
+        CURVEPLOT_SCENE_WIDTH, -CURVEPLOT_SCENE_HEIGHT);
+    vertices = screenMM * vertices.matrix();
 
     pathPoints_.clear();
     for ( size_t index = 0; index < vertices.cols(); index++ )

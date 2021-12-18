@@ -15,7 +15,7 @@ MainWindow::MainWindow()
 {
     ui_->setupUi(this);
 
-    graphicsScene_ = new QGraphicsScene(0, 0, 1000, 800);
+    graphicsScene_ = new QGraphicsScene(0, 0, CURVEPLOT_SCENE_WIDTH, CURVEPLOT_SCENE_HEIGHT);
     graphicsScene_->setBackgroundBrush(Qt::gray);
     ui_->curveView->setScene(graphicsScene_);
 
@@ -34,8 +34,6 @@ MainWindow::MainWindow()
 
     // setup chaiking curve
     mh_ = std::make_shared<MH::ModelHierachy>();
-    mh_->setFrameAxisY(0.0,-1.0,0.0);
-    mh_->setFramePosition(500.0,400.0,0.0);
 
     parentNode_ = mh_->addParent("Parent");
 
@@ -48,8 +46,14 @@ MainWindow::MainWindow()
     auto bspline = std::make_shared<MH::BSpline>(ui_->pointNum->value(),ui_->subdiv->value());
     bsplineNode_ = mh_->addModel(bspline, "BSpline", parentNode_);
 
-    auto camera = std::make_shared<MH::PinholeCamera>(1000, -1000, M_PI/2);
+    double fov = M_PI/5.0;
+    double near = -(1.0/sin(fov/2.0))*cos(fov/2.0)*CURVEPLOT_SCENE_HEIGHT/2.0;
+    double far = near - (double) CURVEPLOT_SCENE_HEIGHT;
+    double camZ = ((double) CURVEPLOT_SCENE_HEIGHT / 2.0) - near;
+    auto camera = std::make_shared<MH::PinholeCamera>(near, far, fov,
+        CURVEPLOT_SCENE_WIDTH, -CURVEPLOT_SCENE_HEIGHT);
     cameraNode_ = mh_->addModel(camera, "Camera");
+    cameraNode_->setTz(camZ);
 
     changeCurveType(ui_->curveType->currentText());
 
@@ -114,6 +118,7 @@ void MainWindow::changeCurvePosX(int pos)
     auto moveScene = (double) pos * ((double) 300/1000);
     chaikinNode_->setTx(moveScene);
     bsplineNode_->setTx(moveScene);
+    testBoxNode_->setTy(moveScene);
     if ( currentCurve_ != nullptr ) currentCurve_->transformChanged();
 }
 
@@ -122,6 +127,7 @@ void MainWindow::changeCurvePosY(int pos)
     auto moveScene = (double) pos * ((double) 300/1000);
     chaikinNode_->setTy(moveScene);
     bsplineNode_->setTy(moveScene);
+    testBoxNode_->setTy(moveScene);
     if ( currentCurve_ != nullptr ) currentCurve_->transformChanged();
 }
 
@@ -130,6 +136,7 @@ void MainWindow::changeCurvePosZ(int pos)
     auto moveScene = (double) pos * ((double) 300/1000);
     chaikinNode_->setTz(moveScene);
     bsplineNode_->setTz(moveScene);
+    testBoxNode_->setTz(moveScene);
     if ( currentCurve_ != nullptr ) currentCurve_->transformChanged();
 }
 

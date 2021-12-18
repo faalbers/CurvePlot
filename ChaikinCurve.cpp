@@ -1,5 +1,7 @@
 #include "ChaikinCurve.hpp"
 
+#include <iostream>
+
 ChaikinCurve::ChaikinCurve(MH::Node *chaikinCurveNode, MH::Node *cameraNode)
     : CurveItem(chaikinCurveNode, cameraNode)
 {
@@ -12,7 +14,7 @@ void ChaikinCurve::pointItemChanged(size_t itemIndex, QPointF offset)
     auto cpPoints = getCPPoints_();
     cpPoints(0, itemIndex) += offset.x();
     cpPoints(1, itemIndex) += offset.y();
-    setCPPoints_(cpPoints);
+    setCPPoint_(itemIndex, cpPoints.col(itemIndex));
     transformChanged();
 }
 
@@ -46,7 +48,16 @@ void ChaikinCurve::createPointItems_()
 void ChaikinCurve::updateCurvePath_()
 {
     //auto vertices = cameraMatrix_ * curveNode_->getTransformedVertices().matrix();
-    auto vertices = curveNode_->getTransformedVertices();
+    //auto vertices = curveNode_->getTransformedVertices();
+    Eigen::Array4Xd vertices =
+        cameraModel_->getMatrix("project") *
+        curveNode_->getTransformTo(cameraNode_) *
+        curveModel_->getPointArray("vtx").matrix();
+    for ( auto vertex : vertices.colwise() ) vertex /= vertex(3);
+
+    Eigen::Matrix4d screenMM = MH::ModelHierachy::screenTransform(
+        CURVEPLOT_SCENE_WIDTH, -CURVEPLOT_SCENE_HEIGHT);
+    vertices = screenMM * vertices.matrix();
 
     pathPoints_.clear();
     for ( size_t index = 0; index < vertices.cols(); index++ )
@@ -57,22 +68,35 @@ void ChaikinCurve::updateCurvePath_()
 
 Eigen::Array4Xd ChaikinCurve::getCPPoints_() const
 {
-    // get MH and model info
-    auto points = curveModel_->getPointArray("cp");
-    auto transform = curveNode_->getTransform();
-
-    // transform to 2D screen
-    points = transform * points.matrix();
-
+    /*
+    Eigen::Array4Xd points =
+        cameraModel_->getMatrix("project") *
+        curveNode_->getTransformTo(cameraNode_) *
+        curveModel_->getPointArray("cp").matrix();
+    for ( auto point : points.colwise() ) point /= point(3);
+    Eigen::Matrix4d screenMM = MH::ModelHierachy::screenTransform(
+        CURVEPLOT_SCENE_WIDTH, -CURVEPLOT_SCENE_HEIGHT);
+    points = screenMM * points.matrix();
+    */
+    Eigen::Array4Xd points = MH::ModelHierachy::screenProject(curveNode_, cameraNode_, "cp");
     return points;
 }
 
-void ChaikinCurve::setCPPoints_(Eigen::Array4Xd cpPoints)
+void ChaikinCurve::setCPPoint_(size_t index, Eigen::Vector4d cpPoint)
 {
-    // transform to model transform
-    auto transform = curveNode_->getTransformInverse();
-    cpPoints = transform * cpPoints.matrix();
-    
-    // put array back
-    curveModel_->setPointArray("cp", cpPoints);
+    Eigen::Vector4d point = curveModel_->getPointFromArray("cp",index);
+    Eigen::Matrix4d transform =
+        cameraModel_->getMatrix("project") * 
+        curveNode_->getTransformTo(cameraNode_);
+    point = transform * point;
+
+    Eigen::Matrix4d screenT = MH::ModelHierachy::screenTransform(
+        CURVEPLOT_SCENE_WIDTH, -CURVEPLOT_SCENE_HEIGHT);
+    cpPoint = screenT.inverse() * cpPoint.matrix();
+    cpPoint *= point(3);
+    cpPoint = transform.inverse() * cpPoint;
+    cpPoint(3) = 1.0;
+
+    // put cp back
+    curveModel_->setPointInArray("cp", index, cpPoint);
 }

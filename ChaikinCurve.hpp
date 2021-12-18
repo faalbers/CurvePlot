@@ -17,7 +17,7 @@ private:
     void    updateCurvePath_();
 
     Eigen::Array4Xd getCPPoints_() const;
-    void            setCPPoints_(Eigen::Array4Xd cpPoints);
+    void            setCPPoint_(size_t index, Eigen::Vector4d cpPoint);
 };
 
 #endif
