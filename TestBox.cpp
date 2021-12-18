@@ -1,7 +1,5 @@
 #include "TestBox.hpp"
 
-#include <iostream>
-
 TestBox::TestBox(MH::Node *testBoxNode, MH::Node *cameraNode)
     : CurveItem(testBoxNode, cameraNode)
 {

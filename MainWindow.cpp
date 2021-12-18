@@ -6,8 +6,6 @@
 #include "ChaikinCurve.hpp"
 #include "BSplineCurve.hpp"
 
-#include <iostream>
-
 MainWindow::MainWindow()
     : ui_(new Ui::MainWindow)
     , graphicsScene_(nullptr)
