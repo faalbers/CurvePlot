@@ -49,7 +49,8 @@ void BSplineCurve::createPointItems_()
 
 void BSplineCurve::updateCurvePath_()
 {
-    auto vertices = curveNode_->getTransformedVertices();
+    auto vertices = curveModel_->getPointArray("vtx");
+    MH::ModelHierachy::pointsToScreen(curveNode_, cameraNode_, vertices);
     
     pathPoints_.clear();
     for ( size_t index = 0; index < vertices.cols(); index++ )
@@ -70,20 +71,16 @@ Eigen::Array4Xd BSplineCurve::getCPPoints_() const
         points.col(cpCount+index) = points.col(index) + tPoints.col(index);
         points(3, cpCount+index) = 1;
     }
-    
-    auto transform = curveNode_->getTransform();
 
-    // transform to 2D screen
-    points = transform * points.matrix();
+    MH::ModelHierachy::pointsToScreen(curveNode_, cameraNode_, points);
 
     return points;
 }
 
 void BSplineCurve::setCPPoints_(Eigen::Array4Xd cpPoints)
 {
-    // transform to model transform
-    auto transform = curveNode_->getTransformInverse();
-    cpPoints = transform * cpPoints.matrix();
+
+    MH::ModelHierachy::screenToPoints(curveNode_, cameraNode_, cpPoints);
     
     // get tangent offsets
     auto count = cpPoints.cols()/2;

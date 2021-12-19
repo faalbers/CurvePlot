@@ -9,16 +9,19 @@ ChaikinCurve::ChaikinCurve(MH::Node *chaikinCurveNode, MH::Node *cameraNode)
 
 void ChaikinCurve::pointItemChanged(size_t itemIndex, QPointF offset)
 {
-    auto cpPoints = MH::ModelHierachy::pointsToScreen(curveNode_, cameraNode_, "cp");
+    auto cpPoints = curveModel_->getPointArray("cp");
+    MH::ModelHierachy::pointsToScreen(curveNode_, cameraNode_, cpPoints);
     cpPoints(0, itemIndex) += offset.x();
     cpPoints(1, itemIndex) += offset.y();
-    MH::ModelHierachy::screenToPoint(curveNode_, cameraNode_, "cp", itemIndex, cpPoints.col(itemIndex));
+    MH::ModelHierachy::screenToPoints(curveNode_, cameraNode_, cpPoints);
+    curveModel_->setPointArray("cp", cpPoints);
     transformChanged();
 }
 
 void ChaikinCurve::transformChanged()
 {
-    auto cpPoints = MH::ModelHierachy::pointsToScreen(curveNode_, cameraNode_, "cp");
+    auto cpPoints = curveModel_->getPointArray("cp");
+    MH::ModelHierachy::pointsToScreen(curveNode_, cameraNode_, cpPoints);
     size_t index = 0;
     for ( auto &pointItem : pointItems_ ) {
         pointItem->setPos(cpPoints(0,index)-5,cpPoints(1,index)-5);
@@ -35,7 +38,8 @@ void ChaikinCurve::modelChanged()
 void ChaikinCurve::createPointItems_()
 {
     // get MH and model info
-    auto cpPoints = MH::ModelHierachy::pointsToScreen(curveNode_, cameraNode_, "cp");
+    auto cpPoints = curveModel_->getPointArray("cp");
+    MH::ModelHierachy::pointsToScreen(curveNode_, cameraNode_, cpPoints);
 
     // create pointItems from cpPoints
     for ( size_t index = 0; index < cpPoints.cols(); index++ ) {
@@ -45,7 +49,8 @@ void ChaikinCurve::createPointItems_()
 
 void ChaikinCurve::updateCurvePath_()
 {
-    Eigen::Array4Xd vertices = MH::ModelHierachy::pointsToScreen(curveNode_, cameraNode_, "vtx");
+    auto vertices = curveModel_->getPointArray("vtx");
+    MH::ModelHierachy::pointsToScreen(curveNode_, cameraNode_, vertices);
 
     pathPoints_.clear();
     for ( size_t index = 0; index < vertices.cols(); index++ )
