@@ -6,9 +6,9 @@ set(CMAKE_CXX_STANDARD 20)
 execute_process(COMMAND git submodule update --init --recursive
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
-#set(CMAKE_PREFIX_PATH C:/Qt/6.1.1/mingw81_64;C:/NumCpp)
-set(CMAKE_PREFIX_PATH C:/Qt/6.1.1/mingw81_64)
+#set(CMAKE_PREFIX_PATH C:/Qt/6.1.1/mingw81_64)
 #set(CMAKE_PREFIX_PATH /Users/frank/Qt/6.1.2/macos)
+set(CMAKE_PREFIX_PATH ~frank/Qt/6.2.3/gcc_64)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -23,6 +23,5 @@ add_subdirectory(extern/ModelHierarchy)
 
 file(GLOB CURVEPLOT_TARGETS *.cpp )
 add_executable(CurvePlot ${CURVEPLOT_TARGETS})
-#target_link_libraries(CurvePlot PRIVATE Qt6::Widgets NumCpp::NumCpp)
 target_link_libraries(CurvePlot PRIVATE Qt6::Widgets ModelHierarchy)
-target_include_directories(CurvePlot PRIVATE C:/eigen-3.4.0 ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(CurvePlot PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
